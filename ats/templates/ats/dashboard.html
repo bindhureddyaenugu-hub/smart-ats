@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | Smart ATS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: "Segoe UI", sans-serif; }
+
+        /* 🔹 HERO BACKGROUND */
+        .hero {
+            height: 100vh;
+            background: url("https://images.unsplash.com/photo-1498050108023-c5249f4df085") center/cover no-repeat;
+            position: relative;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.65);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            animation: fadeIn 1.2s ease;
+        }
+
+        .hero h1 { font-size: 48px; font-weight: bold; }
+        .hero span { color: #6ea8fe; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 🔹 ACTION SECTION */
+        .actions {
+            min-height: 100vh;
+            background: #eef2f7;
+            padding: 80px 20px;
+        }
+
+        /* Cards initially hidden */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.7s ease;
+        }
+
+        /* When visible */
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-box {
+            border: none;
+            border-radius: 15px;
+            transition: 0.3s;
+        }
+
+        .card-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">Smart ATS</a>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="#actions">Features</a></li>
+            <li class="nav-item"><a class="nav-link text-warning" href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Find Your <span>Perfect Candidates</span> in Seconds</h1>
+        <p>Welcome {{ request.user.username }} 👋</p>
+        <p>AI-powered resume shortlisting using NLP & Machine Learning</p>
+        <p class="mt-4">⬇ Scroll Down to Continue</p>
+    </div>
+</section>
+
+<!-- FEATURES (Hidden Until Scroll) -->
+<section id="actions" class="actions" style="background-color: rgb(22, 137, 224);">
+    <div class="container text-center">
+        <h2 class="mb-5 reveal">System Features</h2>
+
+        <div class="row g-4">
+            <div class="col-md-4 reveal">
+                <a href="{% url 'process' %}" class="text-decoration-none">
+                    <div class="card card-box p-4">
+                        <h5>📄 Resume Processing</h5>
+                        <p class="text-muted">Upload → Extract → Remove Bias → Detect Skills</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4 reveal">
+                <a href="{% url 'rank' %}" class="text-decoration-none">
+                    <div class="card card-box p-4">
+                        <h5>📊 Resume Ranking</h5>
+                        <p class="text-muted">SBERT-based ATS Compatibility Scoring</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4 reveal">
+                <a href="{% url 'analytics' %}" class="text-decoration-none">
+                    <div class="card card-box p-4">
+                        <h5>📈 HR Analytics</h5>
+                        <p class="text-muted">Insights, trends, and candidate evaluation</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Scroll Reveal Script -->
+<script>
+    function revealOnScroll() {
+        const reveals = document.querySelectorAll(".reveal");
+
+        reveals.forEach((element) => {
+            const windowHeight = window.innerHeight;
+            const elementTop = element.getBoundingClientRect().top;
+
+            if (elementTop < windowHeight - 80) {
+                element.classList.add("active");
+            }
+        });
+    }
+
+    window.addEventListener("scroll", revealOnScroll);
+</script>
+
+</body>
+</html>

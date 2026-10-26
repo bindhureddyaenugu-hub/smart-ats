@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HR Analytics | Smart ATS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background: #699bff;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .navbar {
+            background: #1f2937;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+
+        .kpi-card h3 {
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .kpi-card p {
+            color: #6c757d;
+            margin: 0;
+        }
+
+        .chart-box {
+            height: 320px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark p-3">
+    <div class="container-fluid">
+        <span class="navbar-brand fw-bold">📊 Smart ATS Analytics</span>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm">Dashboard</a>
+    </div>
+</nav>
+
+<div class="container-fluid mt-4">
+
+    <!-- KPI CARDS -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card p-4 kpi-card">
+                <p>Total Resumes</p>
+                <h3>{{ total_resumes }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-4 kpi-card">
+                <p>Average ATS Score</p>
+                <h3>{{ avg_ats }}%</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-4 kpi-card">
+                <p>Total Skills Found</p>
+                <h3>{{ top_skills|length }}</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-4 kpi-card">
+                <p>System Status</p>
+                <h3 class="text-success">Active</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS ROW -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <h5>ATS Score Distribution</h5>
+                <canvas id="atsChart" class="chart-box"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card p-4">
+                <h5>Top Skills</h5>
+                <canvas id="skillsChart" class="chart-box" ></canvas>
+            </div>
+        </div>
+    </div>
+    <!-- TABLE -->
+    <div class="card p-4">
+        <h5>Candidate Details</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Resume</th>
+                    <th>ATS Score</th>
+                    <th>Skills</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in resume_rows %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ r.name }}</td>
+                    <td>{{ r.ats_score }}%</td>
+                    <td>{{ r.skills }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- 🔹 Chart Scripts -->
+
+<script>
+    // ATS SCORE BAR CHART
+    const atsData = {
+        labels: [{% for r in resume_rows %}"{{ r.name }}",{% endfor %}],
+        datasets: [{
+            label: "ATS Score",
+            data: [{% for r in resume_rows %}{{ r.ats_score }},{% endfor %}],
+            borderWidth: 2
+        }]
+    };
+
+    new Chart(document.getElementById("atsChart"), {
+        type: "bar",
+        data: atsData
+    });
+
+    // SKILLS PIE CHART
+    const skillsData = {
+        labels: [{% for skill,count in top_skills %}"{{ skill }}",{% endfor %}],
+        datasets: [{
+            data: [{% for skill,count in top_skills %}{{ count }},{% endfor %}]
+        }]
+    };
+
+    new Chart(document.getElementById("skillsChart"), {
+        type: "pie",
+        data: skillsData
+    });
+</script>
+
+</body>
+</html>
